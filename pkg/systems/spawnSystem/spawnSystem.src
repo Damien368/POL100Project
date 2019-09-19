@@ -33,8 +33,9 @@ program SpawnSystem()
 		SpawnTheRegions();
 
 		var delay := CalcNextTick();
+		print("delay is:" + delay);
 
-		Wait_For_Event( delay );
+		Sleep(delay);
 	endwhile
 
 	return 1;
@@ -46,9 +47,9 @@ function SpawnTheRegions()
 
     foreach region_name in ( SS_GetRegionNames() )
         var next_run := CalcNextRunTime( region_name );
-        if( next_run > POLCore().systime )
+        if( next_run >= POLCore().systime )
             LogToFile("::log/spawnSystem.log", "["+region_name+"]Spawn not due ("+next_run+">"+POLCore().systime+")");
-            print("if triggered");
+            //print("if triggered");
         continue;
         endif
 
@@ -85,7 +86,7 @@ function CalcNextRunTime( region_name )
 
 	return next_run;
 endfunction
-
+	
 function CalcNextTick()
 
 	var delay_time := 0;
@@ -104,6 +105,8 @@ function CalcNextTick()
 		SleepMS(10);
 	endforeach
 
+	delay_time := delay_time - Polcore().systime;
+ 
 	if( delay_time <= 0 )
 		delay_time := 60;
 	endif
